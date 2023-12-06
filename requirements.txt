@@ -3,7 +3,6 @@ sympy
 numpy
 Pillow
 cython
-pycocotools
 git+https://github.com/yuyanwang-mineral/cocoapi.git#subdirectory=PythonAPI&egg=pycocotools
 submitit
 torch>=1.5.0
