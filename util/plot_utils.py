@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import sys
 from pathlib import Path, PurePath
 
 
@@ -61,13 +61,18 @@ def plot_logs(logs, fields=('class_error', 'loss_bbox_unscaled', 'mAP'), ewm_col
                     np.stack(df.test_coco_eval_bbox.dropna().values)[:, 1]
                 ).ewm(com=ewm_col).mean()
                 axs[j].plot(coco_eval, c=color)
-            else:
-                df.interpolate().ewm(com=ewm_col).mean().plot(
-                    y=[f'train_{field}', f'test_{field}'],
-                    ax=axs[j],
-                    color=[color] * 2,
-                    style=['-', '--']
-                )
+            # else:
+            #   print(df)
+            #   b=df.interpolate().ewm(com=ewm_col)
+            #   print(b)
+            #   c=b.mean()
+            #   print(c)
+            #   d=c.plot(
+            #         y=[f'train_{field}', f'test_{field}'],
+            #         ax=axs[j],
+            #         color=[color] * 2,
+            #         style=['-', '--']
+            #     )
     for ax, field in zip(axs, fields):
         ax.legend([Path(p).name for p in logs])
         ax.set_title(field)
@@ -105,3 +110,23 @@ def plot_precision_recall(files, naming_scheme='iter'):
     axs[1].set_title('Scores / Recall')
     axs[1].legend(names)
     return fig, axs
+
+if __name__ == "__main__":
+  output_dir = sys.argv[1:]
+  
+  if not output_dir:
+    output_dir='./output'
+  else:
+    output_dir=output_dir[0]
+  print(output_dir)
+	# 路径更换为保存输出的eval路径
+	# mAP曲线
+  if 1:
+    files=sorted(list(Path(f"{output_dir}/eval").glob("*.pth")))
+    plot_precision_recall(files)
+    plt.show()
+  # 路径更换为保存输出的路径
+  # 损失曲线
+  
+  plot_logs(Path(output_dir))
+  plt.show()
