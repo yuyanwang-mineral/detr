@@ -61,18 +61,13 @@ def plot_logs(logs, fields=('class_error', 'loss_bbox_unscaled', 'mAP'), ewm_col
                     np.stack(df.test_coco_eval_bbox.dropna().values)[:, 1]
                 ).ewm(com=ewm_col).mean()
                 axs[j].plot(coco_eval, c=color)
-            # else:
-            #   print(df)
-            #   b=df.interpolate().ewm(com=ewm_col)
-            #   print(b)
-            #   c=b.mean()
-            #   print(c)
-            #   d=c.plot(
-            #         y=[f'train_{field}', f'test_{field}'],
-            #         ax=axs[j],
-            #         color=[color] * 2,
-            #         style=['-', '--']
-            #     )
+            else: # install pandas==1.5.3 (tested with python 3.10)
+              df.interpolate().ewm(com=ewm_col).mean().plot(
+                    y=[f'train_{field}', f'test_{field}'],
+                    ax=axs[j],
+                    color=[color] * 2,
+                    style=['-', '--']
+                )
     for ax, field in zip(axs, fields):
         ax.legend([Path(p).name for p in logs])
         ax.set_title(field)
